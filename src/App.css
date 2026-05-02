@@ -21,23 +21,27 @@ button {
 .header {
   max-width: 1000px;
   margin: 0 auto 32px;
+  text-align: center;
 }
 
 .eyebrow {
   margin: 0 0 8px;
   color: #2563eb;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .header h1 {
   margin: 0;
   font-size: 42px;
+  font-weight: 700;
   letter-spacing: -1px;
 }
 
 .description {
   margin-top: 12px;
   color: #6b7280;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -53,23 +57,27 @@ button {
   background: white;
   border-radius: 16px;
   padding: 20px;
+  text-align: center;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .summary-card span {
   color: #6b7280;
   font-size: 14px;
+  font-weight: 600;
 }
 
 .summary-card strong {
   display: block;
   margin-top: 10px;
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 700;
 }
 
 .summary-card p {
   margin: 4px 0 0;
   color: #6b7280;
+  font-size: 13px;
 }
 
 .summary-card.total {
@@ -107,11 +115,13 @@ button {
 .panel-title h2 {
   margin: 0;
   font-size: 22px;
+  font-weight: 700;
 }
 
 .panel-title p {
   margin: 0;
   color: #6b7280;
+  font-size: 14px;
 }
 
 .form-grid {
@@ -165,6 +175,10 @@ select {
   font-weight: 700;
 }
 
+.primary-button:hover {
+  opacity: 0.9;
+}
+
 .secondary-button {
   height: 36px;
   border: 1px solid #d1d5db;
@@ -172,6 +186,10 @@ select {
   background: white;
   color: #374151;
   font-weight: 600;
+}
+
+.secondary-button:hover {
+  background: #f9fafb;
 }
 
 .error-message {
@@ -217,7 +235,18 @@ th {
   background: #f9fafb;
   color: #374151;
   font-size: 14px;
+  font-weight: 700;
   text-align: center;
+}
+
+td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6) {
+  text-align: center;
+}
+
+table tbody tr:hover {
+  background-color: #f9fafb;
 }
 
 .badge {
@@ -229,8 +258,8 @@ th {
 }
 
 .badge.electricity {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #ede9fe;
+  color: #6d28d9;
 }
 
 .badge.material {
@@ -252,6 +281,23 @@ th {
   font-weight: 700;
 }
 
+.delete-button:hover {
+  background: #fecaca;
+}
+
+.chart-panel {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+}
+
+.chart-box {
+  width: 100%;
+  height: 260px;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
 @media (max-width: 768px) {
   .summary-grid,
   .form-grid {
@@ -266,14 +312,4 @@ th {
     align-items: flex-start;
     flex-direction: column;
   }
-}
-
-.chart-panel {
-  max-width: 1000px;
-  margin: 0 auto 24px;
-}
-
-.chart-box {
-  width: 100%;
-  height: 260px;
 }
