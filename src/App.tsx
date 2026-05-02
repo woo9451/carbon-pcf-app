@@ -72,9 +72,9 @@ function App() {
   }, [activities]);
 
   const chartData = [
-  { name: "전기", emission: Number(summary.electricity.toFixed(2)), color: "#3b82f6" },
+  { name: "전기", emission: Number(summary.electricity.toFixed(2)), color: "#f59e0b" },
   { name: "원소재", emission: Number(summary.material.toFixed(2)), color: "#10b981" },
-  { name: "운송", emission: Number(summary.transport.toFixed(2)), color: "#f59e0b" },
+  { name: "운송", emission: Number(summary.transport.toFixed(2)), color: "#8b5cf6" },
   ];
 
   const handleAdd = () => {
