@@ -149,11 +149,11 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <p className="eyebrow">Carbon Management SaaS</p>
-        <h1>탄소 배출 관리 시스템</h1>
+        <p className="eyebrow">AI 기반 탄소관리 SaaS</p>
+        <h1>제품 탄소발자국 관리 대시보드</h1>
         <p className="description">
-          전기, 원소재, 운송 활동 데이터를 입력하면 배출계수를 기준으로
-          탄소 배출량을 자동 계산합니다.
+          전기, 원소재, 운송 데이터를 배출계수 기반으로 환산하여
+          제품 탄소발자국(PCF)을 직관적으로 관리합니다.
         </p>
       </header>
 
@@ -185,7 +185,7 @@ function App() {
 
       <section className="panel chart-panel">
         <div className="panel-title">
-          <h2>카테고리별 배출량 그래프</h2>
+          <h2>활동 유형별 탄소 배출량</h2>
           <p>단위: kgCO2e</p>
         </div>
 
