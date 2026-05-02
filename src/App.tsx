@@ -9,7 +9,20 @@ interface Activity {
   description: string;
   amount: number;
   unit: string;
+  emission: number;
 }
+
+const emissionFactors = {
+  electricity: 0.456,
+  material: 3.2,
+  transport: 3.5,
+};
+
+const typeLabel = {
+  electricity: "전기",
+  material: "원소재",
+  transport: "운송",
+};
 
 function App() {
   const [date, setDate] = useState("");
@@ -24,9 +37,25 @@ function App() {
     return "ton-km";
   };
 
+  const calculateEmission = (type: ActivityType, amount: number) => {
+    return Number((amount * emissionFactors[type]).toFixed(2));
+  };
+
+  const totalEmission = activities.reduce(
+    (sum, activity) => sum + activity.emission,
+    0
+  );
+
   const handleAdd = () => {
     if (!date || !description || !amount) {
       alert("날짜, 설명, 수량을 모두 입력해주세요.");
+      return;
+    }
+
+    const numericAmount = Number(amount);
+
+    if (numericAmount <= 0) {
+      alert("수량은 0보다 큰 숫자로 입력해주세요.");
       return;
     }
 
@@ -35,8 +64,9 @@ function App() {
       date,
       type,
       description,
-      amount: Number(amount),
+      amount: numericAmount,
       unit: getUnit(type),
+      emission: calculateEmission(type, numericAmount),
     };
 
     setActivities([...activities, newActivity]);
@@ -52,9 +82,16 @@ function App() {
       <section>
         <h2>데이터 입력</h2>
 
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
-        <select value={type} onChange={(e) => setType(e.target.value as ActivityType)}>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as ActivityType)}
+        >
           <option value="electricity">전기</option>
           <option value="material">원소재</option>
           <option value="transport">운송</option>
@@ -92,16 +129,18 @@ function App() {
                 <th>설명</th>
                 <th>수량</th>
                 <th>단위</th>
+                <th>배출량</th>
               </tr>
             </thead>
             <tbody>
               {activities.map((activity) => (
                 <tr key={activity.id}>
                   <td>{activity.date}</td>
-                  <td>{activity.type}</td>
+                  <td>{typeLabel[activity.type]}</td>
                   <td>{activity.description}</td>
                   <td>{activity.amount}</td>
                   <td>{activity.unit}</td>
+                  <td>{activity.emission} kgCO2e</td>
                 </tr>
               ))}
             </tbody>
@@ -111,7 +150,7 @@ function App() {
 
       <section>
         <h2>배출량 결과</h2>
-        <p>총 배출량: 0 kgCO2e</p>
+        <p>총 배출량: {totalEmission.toFixed(2)} kgCO2e</p>
       </section>
     </div>
   );
