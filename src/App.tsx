@@ -1,4 +1,14 @@
 import { useMemo, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import "./App.css";
 
 type ActivityType = "electricity" | "material" | "transport";
@@ -60,6 +70,12 @@ function App() {
         .reduce((sum, activity) => sum + activity.emission, 0),
     };
   }, [activities]);
+
+  const chartData = [
+  { name: "전기", emission: Number(summary.electricity.toFixed(2)), color: "#3b82f6" },
+  { name: "원소재", emission: Number(summary.material.toFixed(2)), color: "#10b981" },
+  { name: "운송", emission: Number(summary.transport.toFixed(2)), color: "#f59e0b" },
+  ];
 
   const handleAdd = () => {
     if (!date || !description || !amount) {
@@ -164,6 +180,29 @@ function App() {
           <span>운송</span>
           <strong>{summary.transport.toFixed(2)}</strong>
           <p>kgCO2e</p>
+        </div>
+      </section>
+
+      <section className="panel chart-panel">
+        <div className="panel-title">
+          <h2>카테고리별 배출량 그래프</h2>
+          <p>단위: kgCO2e</p>
+        </div>
+
+        <div className="chart-box">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+                <Bar dataKey="emission">
+                  {chartData.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                    ))}
+                </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </section>
 

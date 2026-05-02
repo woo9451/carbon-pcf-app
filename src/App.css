@@ -260,3 +260,13 @@ th {
     flex-direction: column;
   }
 }
+
+.chart-panel {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+}
+
+.chart-box {
+  width: 100%;
+  height: 260px;
+}
