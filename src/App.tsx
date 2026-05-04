@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import {
   Bar,
   BarChart,
@@ -84,6 +84,36 @@ const emissionFactorMap = Object.fromEntries(
 const typeLabel = Object.fromEntries(
   emissionFactorTable.map((factor) => [factor.code, factor.label]),
 ) as Record<ActivityType, string>;
+
+const csvHeaders = ["date", "type", "description", "amount"];
+
+const parseCsvLine = (line: string) => {
+  const values: string[] = [];
+  let currentValue = "";
+  let isInsideQuote = false;
+
+  for (const character of line) {
+    if (character === '"') {
+      isInsideQuote = !isInsideQuote;
+      continue;
+    }
+
+    if (character === "," && !isInsideQuote) {
+      values.push(currentValue.trim());
+      currentValue = "";
+      continue;
+    }
+
+    currentValue += character;
+  }
+
+  values.push(currentValue.trim());
+  return values;
+};
+
+const isActivityType = (type: string): type is ActivityType => {
+  return type in emissionFactorMap;
+};
 
 function App() {
   const [date, setDate] = useState("");
@@ -201,6 +231,99 @@ function App() {
     setErrorMessage("");
   };
 
+  const handleCsvUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      setErrorMessage("CSV 파일만 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const csvText = String(reader.result ?? "");
+      const rows = csvText
+        .split(/\r?\n/)
+        .map((row) => row.trim())
+        .filter(Boolean);
+
+      if (rows.length < 2) {
+        setErrorMessage("CSV 파일에는 헤더와 최소 1개의 데이터 행이 필요합니다.");
+        event.target.value = "";
+        return;
+      }
+
+      const headers = parseCsvLine(rows[0]).map((header) => header.toLowerCase());
+
+      if (
+        headers.length !== csvHeaders.length ||
+        headers.some((header, index) => header !== csvHeaders[index])
+      ) {
+        setErrorMessage("CSV 헤더는 date,type,description,amount 순서여야 합니다.");
+        event.target.value = "";
+        return;
+      }
+
+      const uploadedActivities: Activity[] = [];
+
+      for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
+        const [csvDate, csvType, csvDescription, csvAmount] = parseCsvLine(rows[rowIndex]);
+
+        if (!csvDate || !csvType || !csvDescription || !csvAmount) {
+          setErrorMessage(`${rowIndex + 1}번째 행에 필수 값이 누락되었습니다.`);
+          event.target.value = "";
+          return;
+        }
+
+        if (!isActivityType(csvType)) {
+          setErrorMessage(
+            `${rowIndex + 1}번째 행의 활동 유형은 electricity, plastic1, plastic2, transport 중 하나여야 합니다.`,
+          );
+          event.target.value = "";
+          return;
+        }
+
+        const numericAmount = Number(csvAmount);
+
+        if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+          setErrorMessage(`${rowIndex + 1}번째 행의 수량은 0보다 큰 숫자여야 합니다.`);
+          event.target.value = "";
+          return;
+        }
+
+        uploadedActivities.push({
+          id: Date.now() + rowIndex,
+          date: csvDate,
+          type: csvType,
+          description: csvDescription,
+          amount: numericAmount,
+          unit: getUnit(csvType),
+          emission: calculateEmission(csvType, numericAmount),
+        });
+      }
+
+      setActivities((currentActivities) => [
+        ...currentActivities,
+        ...uploadedActivities,
+      ]);
+      setErrorMessage("");
+      event.target.value = "";
+    };
+
+    reader.onerror = () => {
+      setErrorMessage("CSV 파일을 읽는 중 오류가 발생했습니다.");
+      event.target.value = "";
+    };
+
+    reader.readAsText(file);
+  };
+
   const handleDelete = (id: number) => {
     setActivities(activities.filter((activity) => activity.id !== id));
   };
@@ -269,9 +392,15 @@ function App() {
         <section className="panel">
           <div className="panel-title">
             <h2>활동 데이터 입력</h2>
-            <button className="secondary-button" onClick={handleSampleData}>
-              샘플 데이터 불러오기
-            </button>
+            <div className="panel-actions">
+              <label className="csv-upload-button">
+                CSV 업로드
+                <input type="file" accept=".csv" onChange={handleCsvUpload} />
+              </label>
+              <button className="secondary-button" onClick={handleSampleData}>
+                샘플 데이터 불러오기
+              </button>
+            </div>
           </div>
 
           <div className="form-grid">

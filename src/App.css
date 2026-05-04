@@ -124,6 +124,12 @@ button {
   font-size: 14px;
 }
 
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -190,6 +196,29 @@ select {
 
 .secondary-button:hover {
   background: #f9fafb;
+}
+
+.csv-upload-button {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: white;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.csv-upload-button:hover {
+  background: #f9fafb;
+}
+
+.csv-upload-button input {
+  display: none;
 }
 
 .error-message {
@@ -313,5 +342,15 @@ table tbody tr:hover {
   .panel-title {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .panel-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .panel-actions .secondary-button,
+  .csv-upload-button {
+    width: 100%;
   }
 }
