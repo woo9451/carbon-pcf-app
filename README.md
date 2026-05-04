@@ -14,6 +14,7 @@
 * Frontend: React, TypeScript, Vite
 * State Management: useState, useMemo
 * Chart: Recharts
+* File Upload: CSV, FileReader
 * Version Control: Git, GitHub
 
 ---
@@ -47,6 +48,12 @@
 
 * 버튼 클릭으로 테스트 데이터 자동 입력
 
+### 7. CSV 업로드 기능
+
+* CSV 파일을 통해 대량 데이터 입력 가능
+* date, type, description, amount 형식 지원
+* 잘못된 type, 누락 값, 잘못된 수량 입력 시 에러 메시지 표시
+
 ---
 
 ## 📊 화면 구성
@@ -62,6 +69,28 @@
 * 전기 사용 → Scope 2
 * 원소재 사용(플라스틱1, 플라스틱2) → Scope 3 (Upstream)
 * 운송 → Scope 3 (Logistics)
+
+---
+
+## 🗂 데이터 구조 (ERD)
+
+Activity
+- id
+- date
+- type
+- description
+- amount
+
+EmissionFactor
+- activityType
+- factor
+- version
+- validFrom
+- validTo
+- source
+
+👉 실제 DB는 구현하지 않았지만,
+👉 DB 테이블로 확장 가능한 구조를 기준으로 설계했습니다.
 
 ---
 
@@ -137,6 +166,10 @@
 초기 과제에서는 빠른 구현을 위해 프론트엔드 중심으로 개발했지만,
 배출계수 구조는 DB 테이블 형태로 확장 가능하도록 설계하여
 실제 SaaS 환경에서도 적용 가능하도록 고려했습니다.
+
+또한 백엔드 및 DB를 직접 구현하지 않고  
+프론트엔드에서 구조를 설계하는 방식으로 선택하여  
+과제 범위 내에서 설계 중심의 접근을 하였습니다.
 
 ---
 
