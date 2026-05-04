@@ -116,9 +116,10 @@ EmissionFactor
 다음과 같은 필드를 통해 이력 관리가 가능하도록 설계했습니다.
 
 * version
-* validFrom
-* validTo
 * source
+* inputUnit
+* resultUnit
+* validFrom / validTo는 향후 DB 확장 시 추가 예정
 
 현재는 구조만 반영하였으며,
 향후 DB에서 이력 기반 조회가 가능하도록 확장 가능합니다.
@@ -142,7 +143,7 @@ EmissionFactor
 
 👉 이유:
 
-* 하드코딩 제거
+* 계산 로직과 배출계수 정의 분리
 * DB 테이블 구조로 확장 가능
 * 유지보수 용이
 
