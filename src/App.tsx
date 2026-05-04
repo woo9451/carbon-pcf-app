@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import "./App.css";
 
-type ActivityType = "electricity" | "material" | "transport";
+type ActivityType = "electricity" | "plastic1" | "plastic2" | "transport";
 
 interface Activity {
   id: number;
@@ -23,17 +23,67 @@ interface Activity {
   emission: number;
 }
 
-const emissionFactors = {
-  electricity: 0.456,
-  material: 3.2,
-  transport: 3.5,
-};
+interface EmissionFactor {
+  code: ActivityType;
+  activityGroup: "electricity" | "material" | "transport";
+  label: string;
+  factor: number;
+  version: string;
+  source: string;
+  inputUnit: string;
+  resultUnit: "kgCO2e";
+}
 
-const typeLabel = {
-  electricity: "전기",
-  material: "원소재",
-  transport: "운송",
-};
+const emissionFactorTable: EmissionFactor[] = [
+  {
+    code: "electricity",
+    activityGroup: "electricity",
+    label: "전기",
+    factor: 0.456,
+    version: "2025.1",
+    source: "과제 제공 도메인 기준",
+    inputUnit: "kWh",
+    resultUnit: "kgCO2e",
+  },
+  {
+    code: "plastic1",
+    activityGroup: "material",
+    label: "플라스틱1",
+    factor: 2.3,
+    version: "2025.1",
+    source: "과제 제공 도메인 기준",
+    inputUnit: "kg",
+    resultUnit: "kgCO2e",
+  },
+  {
+    code: "plastic2",
+    activityGroup: "material",
+    label: "플라스틱2",
+    factor: 3.2,
+    version: "2025.1",
+    source: "과제 제공 도메인 기준",
+    inputUnit: "kg",
+    resultUnit: "kgCO2e",
+  },
+  {
+    code: "transport",
+    activityGroup: "transport",
+    label: "운송",
+    factor: 3.5,
+    version: "2025.1",
+    source: "과제 제공 도메인 기준",
+    inputUnit: "ton-km",
+    resultUnit: "kgCO2e",
+  },
+];
+
+const emissionFactorMap = Object.fromEntries(
+  emissionFactorTable.map((factor) => [factor.code, factor]),
+) as Record<ActivityType, EmissionFactor>;
+
+const typeLabel = Object.fromEntries(
+  emissionFactorTable.map((factor) => [factor.code, factor.label]),
+) as Record<ActivityType, string>;
 
 function App() {
   const [date, setDate] = useState("");
@@ -44,13 +94,11 @@ function App() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const getUnit = (type: ActivityType) => {
-    if (type === "electricity") return "kWh";
-    if (type === "material") return "kg";
-    return "ton-km";
+    return emissionFactorMap[type].inputUnit;
   };
 
   const calculateEmission = (type: ActivityType, amount: number) => {
-    return Number((amount * emissionFactors[type]).toFixed(2));
+    return Number((amount * emissionFactorMap[type].factor).toFixed(2));
   };
 
   const totalEmission = useMemo(() => {
@@ -63,7 +111,9 @@ function App() {
         .filter((activity) => activity.type === "electricity")
         .reduce((sum, activity) => sum + activity.emission, 0),
       material: activities
-        .filter((activity) => activity.type === "material")
+        .filter(
+          (activity) => emissionFactorMap[activity.type].activityGroup === "material",
+        )
         .reduce((sum, activity) => sum + activity.emission, 0),
       transport: activities
         .filter((activity) => activity.type === "transport")
@@ -121,11 +171,20 @@ function App() {
       {
         id: 2,
         date: "2025-05-01",
-        type: "material",
-        description: "플라스틱 1",
+        type: "plastic1",
+        description: "플라스틱1",
         amount: 230,
         unit: "kg",
-        emission: calculateEmission("material", 230),
+        emission: calculateEmission("plastic1", 230),
+      },
+      {
+        id: 4,
+        date: "2025-05-02",
+        type: "plastic2",
+        description: "플라스틱2",
+        amount: 120,
+        unit: "kg",
+        emission: calculateEmission("plastic2", 120),
       },
       {
         id: 3,
@@ -232,7 +291,8 @@ function App() {
                 onChange={(e) => setType(e.target.value as ActivityType)}
               >
                 <option value="electricity">전기</option>
-                <option value="material">원소재</option>
+                <option value="plastic1">플라스틱1</option>
+                <option value="plastic2">플라스틱2</option>
                 <option value="transport">운송</option>
               </select>
             </label>

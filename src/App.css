@@ -262,6 +262,8 @@ table tbody tr:hover {
   color: #6d28d9;
 }
 
+.badge.plastic1,
+.badge.plastic2,
 .badge.material {
   background: #dcfce7;
   color: #15803d;
